@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/requestsystem'
+    username: 'Zufar'
+    password: 'zufar'
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: 'org.hibernate.dialect.PostgreSQLDialect'
+  security:
+    user:
+      name:     zufar
+      password: zufar
+      roles:    admin
+  banner:
+    location: 'classpath:/banner.txt'
