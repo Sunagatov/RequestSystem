@@ -1,8 +1,10 @@
 package com.zufar.requestsystem.service;
 
 import com.zufar.requestsystem.dto.UserDTO;
+import com.zufar.requestsystem.entity.Role;
 import com.zufar.requestsystem.entity.User;
 import com.zufar.requestsystem.exception.UserNotFoundException;
+import com.zufar.requestsystem.repository.RoleRepository;
 import com.zufar.requestsystem.repository.UserRepository;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,14 +23,17 @@ public class UserService {
 
     private static final Logger LOGGER = LogManager.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
-    public Collection<UserDTO> getAll() {
-        return ((Collection<User>) this.userRepository.findAll())
+    public List<UserDTO> getAll() {
+        return ((List<User>) this.userRepository.findAll())
                 .stream()
                 .map(UserService::convertToUserDTO)
                 .collect(Collectors.toList());
@@ -57,6 +61,9 @@ public class UserService {
 
     public UserDTO save(UserDTO user) {
         User userEntity = UserService.convertToUser(user);
+        Set<Role> roles = new HashSet<>();
+        userEntity.setRoles(roles);
+        roles.add(roleRepository.findById(2L).orElse(null));
         userEntity = this.userRepository.save(userEntity);
         return UserService.convertToUserDTO(userEntity);
     }
@@ -87,8 +94,9 @@ public class UserService {
         Objects.requireNonNull(user, "There is no user to convert.");
         return new User(
                 user.getId(),
-                user.getName(),
-                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getNickname(),
                 user.getLogin(),
                 user.getPassword(),
                 user.getRoles());
@@ -98,8 +106,9 @@ public class UserService {
         Objects.requireNonNull(user, "There is no user to convert.");
         return new UserDTO(
                 user.getId(),
-                user.getName(),
-                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getNickname(),
                 user.getLogin(),
                 user.getPassword(),
                 user.getRoles());

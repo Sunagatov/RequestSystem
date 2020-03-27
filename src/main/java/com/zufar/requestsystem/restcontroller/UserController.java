@@ -1,4 +1,4 @@
-package com.zufar.requestsystem.controller;
+package com.zufar.requestsystem.restcontroller;
 
 import com.zufar.requestsystem.dto.UserDTO;
 import com.zufar.requestsystem.service.UserService;

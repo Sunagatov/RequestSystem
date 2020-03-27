@@ -2,11 +2,13 @@ package com.zufar.requestsystem.configuration;
 
 
 import com.zufar.requestsystem.dto.UserDTO;
+import com.zufar.requestsystem.exception.UserNotFoundException;
 import com.zufar.requestsystem.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("customUserDetailsService")
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private static final Logger LOGGER = LogManager.getLogger(CustomUserDetailsService.class);
@@ -40,7 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(errorMessage, exc);
         }
         return CustomUserDetails.builder()
-                .username(user.getName())
+                .username(user.getLogin())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .authorities(user.getRoles())
                 .credentialsNonExpired(true)
@@ -48,5 +50,18 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .accountNonLocked(true)
                 .enabled(true)
                 .build();
+    }
+
+    public UserDTO getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        UserDTO user = userService.getByLogin(username);
+        if (user == null) throw new UserNotFoundException();
+        return user;
     }
 }

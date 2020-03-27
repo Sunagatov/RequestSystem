@@ -17,5 +17,6 @@ public class RequestDTO {
 
     private Long id;
     private String title;
+    private String description;
     private UserDTO user;
 }

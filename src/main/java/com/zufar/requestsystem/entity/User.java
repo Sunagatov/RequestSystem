@@ -41,11 +41,14 @@ public class User {
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_seq")
     private Long id;
 
-    @Column(name = "name", length = 256, nullable = false)
-    private String name;
+    @Column(name = "firstname", length = 256, nullable = false)
+    private String firstName;
 
-    @Column(name = "email", length = 256, nullable = false)
-    private String email;
+    @Column(name = "lastname", length = 256, nullable = false)
+    private String lastName;
+
+    @Column(name = "nickname", length = 256, nullable = false, unique = true)
+    private String nickname;
 
     @Column(name = "login", length = 256, nullable = false, unique = true)
     private String login;

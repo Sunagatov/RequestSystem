@@ -39,6 +39,9 @@ public class Request {
     @Column(name = "title", length = 256, nullable = false)
     private String title;
 
+    @Column(name = "description", length = 256, nullable = false)
+    private String description;
+
     @OneToOne(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.JOIN)
     @JoinColumn(name = "user_id")

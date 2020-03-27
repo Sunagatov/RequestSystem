@@ -1,4 +1,7 @@
 spring:
+  freemarker:
+    template-loader-path: classpath:/templates
+    suffix: .ftl
   datasource:
     url: 'jdbc:postgresql://localhost:5432/requestsystem'
     username: 'Zufar'

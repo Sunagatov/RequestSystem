@@ -1,5 +1,6 @@
 package com.zufar.requestsystem.service;
 
+import com.zufar.requestsystem.configuration.CustomUserDetailsService;
 import com.zufar.requestsystem.dto.RequestDTO;
 import com.zufar.requestsystem.dto.UserDTO;
 import com.zufar.requestsystem.entity.Request;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -23,14 +24,16 @@ public class RequestService {
 
     private static final Logger LOGGER = LogManager.getLogger(RequestService.class);
     private final RequestRepository requestRepository;
+    private final CustomUserDetailsService userDetailsService;
 
     @Autowired
-    public RequestService(RequestRepository requestRepository) {
+    public RequestService(RequestRepository requestRepository, CustomUserDetailsService userDetailsService) {
         this.requestRepository = requestRepository;
+        this.userDetailsService = userDetailsService;
     }
 
-    public Collection<RequestDTO> getAll() {
-        return ((Collection<Request>) this.requestRepository.findAll())
+    public List<RequestDTO> getAll() {
+        return ((List<Request>) this.requestRepository.findAll())
                 .stream()
                 .map(RequestService::convertToRequestDTO)
                 .collect(Collectors.toList());
@@ -38,7 +41,7 @@ public class RequestService {
 
     public RequestDTO getById(Long id) {
         Request statusEntity = this.requestRepository.findById(id).orElseThrow(() -> {
-            final String errorMessage = "Getting an request with id=" + id + " is impossible. There is no a sort attribute.";
+            String errorMessage = "Getting an request with id=" + id + " is impossible. There is no a sort attribute.";
             RequestNotFoundException requestNotFoundException = new RequestNotFoundException(errorMessage);
             LOGGER.error(errorMessage, requestNotFoundException);
             return requestNotFoundException;
@@ -66,7 +69,7 @@ public class RequestService {
 
     public Boolean isExists(Long id) {
         if (!this.requestRepository.existsById(id)) {
-            final String errorMessage = "The request with id = " + id + " not found.";
+            String errorMessage = "The request with id = " + id + " not found.";
             RequestNotFoundException requestNotFoundException = new RequestNotFoundException(errorMessage);
             LOGGER.error(errorMessage, requestNotFoundException);
             throw requestNotFoundException;
@@ -76,21 +79,42 @@ public class RequestService {
 
     public static RequestDTO convertToRequestDTO(Request request) {
         Objects.requireNonNull(request, "There is no request to convert.");
-        final UserDTO user = UserService.convertToUserDTO(request.getUser());
+        UserDTO user = UserService.convertToUserDTO(request.getUser());
         return new RequestDTO(
                 request.getId(),
                 request.getTitle(),
+                request.getDescription(),
                 user
         );
     }
 
-    public static Request convertToRequest(RequestDTO order) {
-        Objects.requireNonNull(order, "There is no order to convert.");
-        final User user = UserService.convertToUser(order.getUser());
+    public static Request convertToRequest(RequestDTO request) {
+        Objects.requireNonNull(request, "There is no request to convert.");
+        User user = UserService.convertToUser(request.getUser());
         return new Request(
-                order.getId(),
-                order.getTitle(),
+                request.getId(),
+                request.getTitle(),
+                request.getDescription(),
                 user
         );
+    }
+
+    public RequestDTO createRequest(String title, String description) {
+        RequestDTO request = new RequestDTO();
+        request.setId(null);
+        request.setTitle(title);
+        request.setDescription(description);
+        UserDTO currentUser = userDetailsService.getCurrentUser();
+        request.setUser(currentUser);
+        return request;
+    }
+
+    public RequestDTO createRequest(String title, String description, UserDTO user) {
+        RequestDTO request = new RequestDTO();
+        request.setId(null);
+        request.setTitle(title);
+        request.setDescription(description);
+        request.setUser(user);
+        return request;
     }
 }

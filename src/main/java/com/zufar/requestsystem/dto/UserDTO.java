@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.Column;
 import java.util.Set;
 
 @Getter
@@ -20,8 +21,9 @@ import java.util.Set;
 public class UserDTO {
 
     private Long id;
-    private String name;
-    private String email;
+    private String firstName;
+    private String lastName;
+    private String nickname;
     private String login;
     private String password;
     private Set<Role> roles;
