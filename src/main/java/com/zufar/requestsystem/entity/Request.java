@@ -28,7 +28,7 @@ import javax.persistence.GenerationType;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "orders")
+@Table(name = "requests")
 public class Request {
 
     @Id

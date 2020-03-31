@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping(value = "users", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "api/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserController {
 
     private final UserService userService;

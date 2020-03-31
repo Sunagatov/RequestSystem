@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(value = "requests", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "api/requests", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class RequestController {
 
     private final RequestService requestService;
